@@ -69,6 +69,22 @@
                 });
                 document.getElementById('csatBtn').style.display = 'none';
                 document.getElementById('vezerlok').style.display = 'block';
+                const most = new Date();
+
+const ev = most.getFullYear();
+const honap = String(most.getMonth() + 1).padStart(2, '0');
+const nap = String(most.getDate()).padStart(2, '0');
+
+const ora = String(most.getHours()).padStart(2, '0');
+const perc = String(most.getMinutes()).padStart(2, '0');
+const mp = String(most.getSeconds()).padStart(2, '0');
+
+const idoParancs =
+    `SET_TIME:${ev}-${honap}-${nap} ${ora}:${perc}:${mp}`;
+
+await kuldes(idoParancs);
+
+console.log("Idő szinkron elküldve:", idoParancs);
             } catch (e) { alert("Hiba: " + e); }
         }
 
