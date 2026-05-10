@@ -82,6 +82,22 @@
         async function kreditMentese() {
             const s = document.getElementById('sorszamInput').value;
             const k = document.getElementById('kreditInput').value;
+            const most = new Date();
+
+const ev = most.getFullYear();
+const honap = String(most.getMonth() + 1).padStart(2, '0');
+const nap = String(most.getDate()).padStart(2, '0');
+
+const ora = String(most.getHours()).padStart(2, '0');
+const perc = String(most.getMinutes()).padStart(2, '0');
+const mp = String(most.getSeconds()).padStart(2, '0');
+
+const idoParancs =
+    `SET_TIME:${ev}-${honap}-${nap} ${ora}:${perc}:${mp}`;
+
+await kuldes(idoParancs);
+
+console.log("Idő szinkron elküldve:", idoParancs);
             if (s && k) {
                 await kuldes('SET_CREDIT:' + s + ':' + k);
                 // Itt törlődnek ki a mezők küldés után:
