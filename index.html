@@ -41,7 +41,28 @@
             <input type="number" id="kreditInput" placeholder="Új kredit">
             <button class="btn-save" onclick="kreditMentese()">MENTÉS</button>
         </div>
-    </div>
+    <div class="admin-section">
+    <h3>Wi-Fi beállítás</h3>
+
+    <button class="btn-save" style="background:#2980b9;"
+        onclick="wifiScan()">
+        WIFI HÁLÓZATOK KERESÉSE
+    </button>
+
+    <select id="wifiLista"
+        style="width:100%; padding:10px; margin-top:10px; font-size:18px;">
+    </select>
+
+    <input type="password"
+        id="wifiJelszo"
+        placeholder="Wi-Fi jelszó">
+
+    <button class="btn-save"
+        style="background:#16a085;"
+        onclick="wifiCsatlakozas()">
+        WIFI CSATLAKOZÁS
+    </button>
+</div>
 
     <script>
         let writeChar;
@@ -63,12 +84,46 @@
                 await notifyChar.startNotifications();
                 notifyChar.addEventListener('characteristicvaluechanged', (event) => {
                     const data = new TextDecoder().decode(event.target.value);
-                    if (data.startsWith("CREDIT_IS:")) {
+                   
+                    if (data.startsWith("WIFI_LIST:")) {
+
+    const lista = data.replace("WIFI_LIST:", "");
+
+    const halozatok = lista.split(",");
+
+    const select = document.getElementById('wifiLista');
+
+    select.innerHTML = "";
+
+    halozatok.forEach(wifi => {
+
+        const option = document.createElement("option");
+
+        option.value = wifi;
+        option.text = wifi;
+
+        select.appendChild(option);
+    });
+}
                         document.getElementById('kreditEredmeny').value = data.split(":")[1];
                     }
                 });
                 document.getElementById('csatBtn').style.display = 'none';
                 document.getElementById('vezerlok').style.display = 'block';
+                const now = new Date();
+
+const ev = now.getFullYear();
+const honap = String(now.getMonth() + 1).padStart(2, '0');
+const nap = String(now.getDate()).padStart(2, '0');
+
+const ora = String(now.getHours()).padStart(2, '0');
+const perc = String(now.getMinutes()).padStart(2, '0');
+const mp = String(now.getSeconds()).padStart(2, '0');
+
+const idoString =
+`${ev}-${honap}-${nap} ${ora}:${perc}:${mp}`;
+
+await kuldes('SET_TIME:' + idoString);
             } catch (e) { alert("Hiba: " + e); }
         }
 
@@ -89,7 +144,32 @@
                 document.getElementById('kreditInput').value = '';
                 document.getElementById('kreditEredmeny').value = '';
             }
-        }
+        }async function wifiScan() {
+
+    await kuldes('SCAN_WIFI');
+}
+
+async function wifiCsatlakozas() {
+
+    const wifiNev =
+        document.getElementById('wifiLista').value;
+
+    const wifiJelszo =
+        document.getElementById('wifiJelszo').value;
+
+    if (wifiNev && wifiJelszo) {
+
+        await kuldes(
+            'SET_WIFI:' +
+            wifiNev +
+            ':' +
+            wifiJelszo
+        );
+
+        alert("Wi-Fi adatok elküldve!");
+    }
+}
+        
     </script>
 </body>
 </html>
