@@ -40,6 +40,26 @@
             <button class="btn-save" style="background:#27ae60;" onclick="lekerdezes()">KREDIT LEKÉRDEZÉSE</button>
             <input type="number" id="kreditInput" placeholder="Új kredit">
             <button class="btn-save" onclick="kreditMentese()">MENTÉS</button>
+            <button class="btn-save"
+style="background:#2980b9;"
+onclick="logLekeres()">
+
+SD LOG LEKÉRÉS
+
+</button>
+
+<textarea
+id="logDoboz"
+
+style="
+width:100%;
+height:250px;
+margin-top:10px;
+background:#111;
+color:#00ff00;
+">
+
+</textarea>
         </div>
     </div>
 
@@ -63,9 +83,34 @@
                 await notifyChar.startNotifications();
                 notifyChar.addEventListener('characteristicvaluechanged', (event) => {
                     const data = new TextDecoder().decode(event.target.value);
-                    if (data.startsWith("CREDIT_IS:")) {
-                        document.getElementById('kreditEredmeny').value = data.split(":")[1];
-                    }
+                   if (
+data.startsWith(
+"CREDIT_IS:"
+)
+) {
+
+document
+.getElementById(
+'kreditEredmeny'
+)
+.value =
+data.split(":")[1];
+
+}
+
+else {
+
+document
+.getElementById(
+'logDoboz'
+)
+.value
++=
+data
++
+"\n";
+
+}
                 });
                 document.getElementById('csatBtn').style.display = 'none';
                 document.getElementById('vezerlok').style.display = 'block';
@@ -80,6 +125,13 @@
         }
 
         async function kreditMentese() {
+            async function logLekeres() {
+
+await kuldes(
+"GET_LOG"
+);
+
+}
             const s = document.getElementById('sorszamInput').value;
             const k = document.getElementById('kreditInput').value;
             if (s && k) {
